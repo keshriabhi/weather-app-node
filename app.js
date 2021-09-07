@@ -1,29 +1,39 @@
-const request = require('request');
+
 const geocode = require('./utils/geocode');
 const forecast = require('./utils/forecast');
+const chalk = require('chalk');
 
-const URL = 'http://api.weatherstack.com/current?access_key=91e0f748cd2513dedd9adb536727d0fd&query=New%20York';
+const place = process.argv[2];
 
-// request({url : URL, json : true}, (error, response)=>{
-//     // console.error('error : ',error);
-//     // console.log('Status Code : ',response && response.statusCode);
-//     // console.log('Body : ',body);
-//     if(error){
-//         console.log('There was an error');
-//     }else if(response.body.error){
-//         console.log('Error code -> '+response.body.error.code);
-//     }else{
-//         console.log('temperature -> '+response.body.current.temperature);
-//     }
-// })
-
-geocode('Delhi',(error, data)=>{
+if(!place){
+    return console.log(chalk.red.inverse('Please provide a valid location'));
+}
+//location -> lat and long
+geocode(place,(error, data)=>{
     if(error){
         console.log('Error -> '+error)
     }else{
-        console.log('Lat = '+data.lattitude);
-        console.log('Long = '+data.longitude);
-        console.log('Place = '+data.place_name);
+        // console.log('Lat = '+data.lattitude);
+        // console.log('Long = '+data.longitude);
+        // console.log('Place = '+data.place_name);
+        forecast(data.lattitude, data.longitude, (error, forcastData)=>{
+            if(error){
+                console.log('error ',error);
+            }else{
+                console.log(data.place_name)
+                console.log(forcastData);
+            }
+        })
     }
 
 })
+
+//lat/long -> weather
+
+// forecast(-44.6284, -75.7888, (error, data)=>{
+//     if(error){
+//         console.log('error ',error);
+//     }else{
+//         console.log(data);
+//     }
+// })
